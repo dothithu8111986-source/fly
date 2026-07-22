@@ -1,1 +1,315 @@
+--// Fly V4 Mobile Fix
 
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+
+local flying = false
+local speed = 70
+local vertical = 0
+
+local velocity
+local gyro
+
+
+-- GUI
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "FlyV1"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0,230,0,220)
+main.Position = UDim2.new(0.5,-115,0.5,-110)
+main.BackgroundColor3 = Color3.fromRGB(25,25,35)
+main.Parent = gui
+
+local corner = Instance.new("UICorner")
+corner.Parent = main
+
+
+
+-- Drag
+
+local dragging = false
+local dragStart
+local startPos
+
+main.InputBegan:Connect(function(i)
+	if i.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = i.Position
+		startPos = main.Position
+	end
+end)
+
+main.InputEnded:Connect(function(i)
+	if i.UserInputType == Enum.UserInputType.Touch then
+		dragging = false
+	end
+end)
+
+main.InputChanged:Connect(function(i)
+	if dragging and i.UserInputType == Enum.UserInputType.Touch then
+		local d = i.Position - dragStart
+		
+		main.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset+d.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset+d.Y
+		)
+	end
+end)
+
+
+
+local function makeButton(text,pos)
+
+	local b = Instance.new("TextButton")
+	b.Size = UDim2.new(0,90,0,40)
+	b.Position = pos
+	b.Text = text
+	b.TextScaled = true
+	b.Parent = main
+
+	local c = Instance.new("UICorner")
+	c.Parent = b
+
+	return b
+end
+
+
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(0,120,0,35)
+title.Position = UDim2.new(0,55,0,5)
+title.Text = "✈ FLY V1"
+title.TextScaled = true
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.new(1,1,1)
+title.Parent = main
+
+
+local minimize = makeButton(
+	"MIN",
+	UDim2.new(0,5,0,5)
+)
+
+local close = makeButton(
+	"X",
+	UDim2.new(1,-45,0,5)
+)
+
+
+local fly = makeButton(
+	"FLY",
+	UDim2.new(0.5,-45,0,50)
+)
+
+local up = makeButton(
+	"UP",
+	UDim2.new(0,10,0,100)
+)
+
+local down = makeButton(
+	"DOWN",
+	UDim2.new(0,10,0,150)
+)
+
+
+local plus = makeButton(
+	"+ SPEED",
+	UDim2.new(0,120,0,100)
+)
+
+local minus = makeButton(
+	"- SPEED",
+	UDim2.new(0,120,0,150)
+)
+
+
+
+local speedLabel = Instance.new("TextLabel")
+speedLabel.Size = UDim2.new(0,100,0,35)
+speedLabel.Position = UDim2.new(0.5,-50,0,185)
+speedLabel.Text = "Speed: 70"
+speedLabel.TextScaled = true
+speedLabel.BackgroundTransparency = 1
+speedLabel.TextColor3 = Color3.new(1,1,1)
+speedLabel.Parent = main
+
+
+
+-- Open button
+
+local open = Instance.new("TextButton")
+open.Size = UDim2.new(0,60,0,60)
+open.Position = UDim2.new(0,20,0.5,0)
+open.Text = "✈"
+open.TextScaled = true
+open.Visible = false
+open.Parent = gui
+
+local openCorner = Instance.new("UICorner")
+openCorner.CornerRadius = UDim.new(1,0)
+openCorner.Parent = open
+
+
+
+-- Fly
+
+local function startFly()
+
+	local char = player.Character or player.CharacterAdded:Wait()
+	local root = char:WaitForChild("HumanoidRootPart")
+	local hum = char:WaitForChild("Humanoid")
+
+	hum:ChangeState(Enum.HumanoidStateType.Physics)
+
+
+	velocity = Instance.new("BodyVelocity")
+	velocity.MaxForce = Vector3.new(
+		math.huge,
+		math.huge,
+		math.huge
+	)
+	velocity.Parent = root
+
+
+	gyro = Instance.new("BodyGyro")
+	gyro.MaxTorque = Vector3.new(
+		math.huge,
+		math.huge,
+		math.huge
+	)
+	gyro.P = 10000
+	gyro.Parent = root
+
+
+	flying = true
+	fly.Text = "OFF"
+
+end
+
+
+
+local function stopFly()
+
+	flying = false
+
+	if velocity then velocity:Destroy() end
+	if gyro then gyro:Destroy() end
+
+
+	local hum = player.Character:FindFirstChild("Humanoid")
+
+	if hum then
+		hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+	end
+
+
+	fly.Text = "FLY"
+
+end
+
+
+
+fly.MouseButton1Click:Connect(function()
+
+	if flying then
+		stopFly()
+	else
+		startFly()
+	end
+
+end)
+
+
+
+up.MouseButton1Down:Connect(function()
+	vertical = 1
+end)
+
+up.MouseButton1Up:Connect(function()
+	vertical = 0
+end)
+
+
+down.MouseButton1Down:Connect(function()
+	vertical = -1
+end)
+
+down.MouseButton1Up:Connect(function()
+	vertical = 0
+end)
+
+
+
+plus.MouseButton1Click:Connect(function()
+
+	speed = math.min(speed + 10,200)
+	speedLabel.Text = "Speed: "..speed
+
+end)
+
+
+minus.MouseButton1Click:Connect(function()
+
+	speed = math.max(speed - 10,10)
+	speedLabel.Text = "Speed: "..speed
+
+end)
+
+
+
+minimize.MouseButton1Click:Connect(function()
+
+	main.Visible = false
+	open.Visible = true
+
+end)
+
+
+
+open.MouseButton1Click:Connect(function()
+
+	main.Visible = true
+	open.Visible = false
+
+end)
+
+
+
+close.MouseButton1Click:Connect(function()
+
+	gui:Destroy()
+
+end)
+
+
+
+RunService.RenderStepped:Connect(function()
+
+	if flying and velocity and gyro then
+		
+		local char = player.Character
+		
+		if char then
+			
+			local hum = char:FindFirstChild("Humanoid")
+			local cam = workspace.CurrentCamera
+			
+			velocity.Velocity =
+				(hum.MoveDirection * speed)
+				+ Vector3.new(0,vertical*speed,0)
+			
+			gyro.CFrame = cam.CFrame
+			
+		end
+	end
+
+end)
