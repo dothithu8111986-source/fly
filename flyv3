@@ -1,0 +1,176 @@
+local _0x1a2b3c = game:GetService("Players")
+local _0x4d5e6f = game:GetService("RunService")
+
+local _0x7g8h9i = _0x1a2b3c.LocalPlayer
+
+local _0x1 = 0
+local _0x2 = 70
+local _0x3 = 0
+
+local _0x4
+local _0x5
+
+
+-- GUI
+local _0x6 = Instance.new("ScreenGui")
+_0x6.Name = "FlyV2"
+_0x6.ResetOnSpawn = false
+_0x6.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+_0x6.Parent = game.CoreGui
+
+
+local _0x7 = Instance.new("Frame")
+_0x7.Size = UDim2.new(0, 220, 0, 210)
+_0x7.Position = UDim2.new(0.5, -110, 0.5, -105)
+_0x7.BackgroundColor3 = Color3.fromRGB(18, 10, 45)
+_0x7.Active = true
+_0x7.Draggable = true
+_0x7.Parent = _0x6
+Instance.new("UICorner", _0x7).CornerRadius = UDim.new(0, 14)
+
+local _0x8 = Instance.new("UIStroke")
+_0x8.Color = Color3.fromRGB(255, 70, 210)
+_0x8.Thickness = 2
+_0x8.Parent = _0x7
+
+
+local function _0x9(_0xa, _0xb, _0xc)
+	local _0xd = Instance.new("TextButton")
+	_0xd.Size = UDim2.new(0, 65, 0, 30)
+	_0xd.Position = _0xb
+	_0xd.Text = _0xa
+	_0xd.Font = Enum.Font.GothamBold
+	_0xd.TextSize = 11
+	_0xd.TextColor3 = Color3.new(1,1,1)
+	_0xd.BackgroundColor3 = _0xc
+	_0xd.AutoLocalize = false
+	_0xd.Parent = _0x7
+	Instance.new("UICorner", _0xd).CornerRadius = UDim.new(0, 7)
+	return _0xd
+end
+
+
+local _0xe = Instance.new("TextLabel")
+_0xe.Size = UDim2.new(1, 0, 0, 35)
+_0xe.Position = UDim2.new(0, 0, 0, 3)
+_0xe.Text = "✈ FLY V2"
+_0xe.Font = Enum.Font.GothamBold
+_0xe.TextSize = 15
+_0xe.BackgroundTransparency = 1
+_0xe.TextColor3 = Color3.fromRGB(110, 255, 255)
+_0xe.Parent = _0x7
+
+
+local _0xf = _0x9("Hide", UDim2.new(0, 5, 0, 5), Color3.fromRGB(60, 160, 255))
+local _0x10 = _0x9("Close", UDim2.new(1, -70, 0, 5), Color3.fromRGB(255, 50, 50))
+local _0x11 = _0x9("Fly", UDim2.new(0.5, -32, 0, 48), Color3.fromRGB(50, 255, 130))
+local _0x12 = _0x9("Up", UDim2.new(0, 10, 0, 95), Color3.fromRGB(255, 180, 60))
+local _0x13 = _0x9("Down", UDim2.new(0, 10, 0, 135), Color3.fromRGB(70, 140, 255))
+local _0x14 = _0x9("+", UDim2.new(0, 145, 0, 95), Color3.fromRGB(180, 100, 255))
+local _0x15 = _0x9("-", UDim2.new(0, 145, 0, 135), Color3.fromRGB(255, 120, 180))
+
+
+local _0x16 = Instance.new("TextLabel")
+_0x16.Size = UDim2.new(1, -20, 0, 28)
+_0x16.Position = UDim2.new(0, 10, 0, 170)
+_0x16.Text = "Speed: 70"
+_0x16.Font = Enum.Font.GothamMedium
+_0x16.TextSize = 12
+_0x16.BackgroundTransparency = 1
+_0x16.TextColor3 = Color3.fromRGB(255, 230, 100)
+_0x16.Parent = _0x7
+
+
+local _0x17 = Instance.new("TextButton")
+_0x17.Size = UDim2.new(0, 50, 0, 50)
+_0x17.Position = UDim2.new(0, 15, 0.5, -25)
+_0x17.Text = "✈"
+_0x17.Font = Enum.Font.GothamBold
+_0x17.TextSize = 18
+_0x17.Visible = false
+_0x17.BackgroundColor3 = Color3.fromRGB(20, 12, 50)
+_0x17.AutoLocalize = false
+_0x17.Parent = _0x6
+Instance.new("UICorner", _0x17).CornerRadius = UDim.new(1,0)
+
+
+local function _0x18()
+	local _0x19 = _0x7g8h9i.Character or _0x7g8h9i.CharacterAdded:Wait()
+	local _0x1a = _0x19:WaitForChild("HumanoidRootPart")
+	local _0x1b = _0x19:WaitForChild("Humanoid")
+
+	_0x1b:ChangeState(Enum.HumanoidStateType.Physics)
+
+	_0x4 = Instance.new("BodyVelocity")
+	_0x4.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+	_0x4.Parent = _0x1a
+
+	_0x5 = Instance.new("BodyGyro")
+	_0x5.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+	_0x5.P = 10000
+	_0x5.Parent = _0x1a
+
+	_0x1 = 1
+	_0x11.Text = "Off"
+end
+
+local function _0x1c()
+	_0x1 = 0
+	if _0x4 then _0x4:Destroy() end
+	if _0x5 then _0x5:Destroy() end
+
+	local _0x1b = _0x7g8h9i.Character and _0x7g8h9i.Character:FindFirstChild("Humanoid")
+	if _0x1b then
+		_0x1b:ChangeState(Enum.HumanoidStateType.GettingUp)
+	end
+	_0x11.Text = "Fly"
+end
+
+
+_0x11.MouseButton1Click:Connect(function()
+	if _0x1 == 1 then _0x1c() else _0x18() end
+end)
+
+_0x12.MouseButton1Down:Connect(function() _0x3 = 1 end)
+_0x12.MouseButton1Up:Connect(function() _0x3 = 0 end)
+
+_0x13.MouseButton1Down:Connect(function() _0x3 = -1 end)
+_0x13.MouseButton1Up:Connect(function() _0x3 = 0 end)
+
+_0x14.MouseButton1Click:Connect(function()
+	_0x2 = math.min(_0x2 + 10, 200)
+	_0x16.Text = "Speed: ".._0x2
+end)
+
+_0x15.MouseButton1Click:Connect(function()
+	_0x2 = math.max(_0x2 - 10, 10)
+	_0x16.Text = "Speed: ".._0x2
+end)
+
+_0xf.MouseButton1Click:Connect(function()
+	_0x7.Visible = false
+	_0x17.Visible = true
+end)
+
+_0x17.MouseButton1Click:Connect(function()
+	_0x7.Visible = true
+	_0x17.Visible = false
+end)
+
+_0x10.MouseButton1Click:Connect(function()
+	_0x6:Destroy()
+end)
+
+
+_0x4d5e6f.RenderStepped:Connect(function()
+	if _0x1 == 1 and _0x4 and _0x5 then
+		local _0x19 = _0x7g8h9i.Character
+		if not _0x19 then return end
+		local _0x1b = _0x19:FindFirstChild("Humanoid")
+		if not _0x1b then return end
+		local _0x1d = workspace.CurrentCamera
+
+		_0x4.Velocity = (_0x1b.MoveDirection * _0x2) + Vector3.new(0, _0x3 * _0x2, 0)
+		_0x5.CFrame = _0x1d.CFrame
+	end
+end)
